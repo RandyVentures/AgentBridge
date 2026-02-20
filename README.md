@@ -12,6 +12,7 @@ This means anyone can create a CLI layer for an API, even if the API owner never
 
 ## Current Scope
 - Generator commands:
+  - `init`
   - `validate`
   - `generate`
   - `scaffold`
@@ -46,17 +47,22 @@ Use either `npx api-to-cli` or `api-to-cli` (if globally installed).
 npx api-to-cli validate \
   --config ./examples/trello/api-to-cli.config.js
 
-# 2) Generate from custom config
+# 2) Bootstrap a config from an API base URL
+npx api-to-cli init \
+  --url https://api.example.com \
+  --output ./api-to-cli.config.js
+
+# 3) Generate from custom config
 npx api-to-cli generate \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-cli
 
-# 3) Generate from OpenAPI spec (local file or URL)
+# 4) Generate from OpenAPI spec (local file or URL)
 npx api-to-cli generate \
   --spec ./examples/openapi/sample-openapi.yaml \
   --output ./examples/openapi/sample-openapi-cli
 
-# 4) Generate a full agent bundle (CLI + skill + manifest)
+# 5) Generate a full agent bundle (CLI + skill + manifest)
 npx api-to-cli scaffold \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-agent
@@ -116,6 +122,52 @@ flowchart LR
 - For `POST/PUT/PATCH/DELETE`, generated commands require `--yes`
 - If OpenAPI operation has JSON object requestBody, generated command creates typed body flags like `--body-name`
 - Generated commands also support `--body <json>` and `--body-stdin` as fallback modes
+
+## Init From URL
+- Command: `api-to-cli init --url <api-base-url> --output ./api-to-cli.config.js`
+- Behavior:
+  - Tries to discover OpenAPI automatically from common paths (`/openapi.json`, `/swagger.json`, etc.)
+  - If found: writes a populated config derived from the spec
+  - If not found: writes a starter config template you can edit
+- Optional flags:
+  - `--name <cli-name>`
+  - `--version <semver>`
+
+## OpenAPI Quickstart
+
+Run with your own spec file:
+
+```bash
+# 1) Validate an OpenAPI spec
+npx api-to-cli validate --spec ./openapi.yaml
+
+# 2) Generate a CLI project from the spec
+npx api-to-cli generate --spec ./openapi.yaml --output ./myapi-cli
+
+# 3) Generate a full agent bundle (CLI + skill + manifest)
+npx api-to-cli scaffold --spec ./openapi.yaml --output ./myapi-agent
+```
+
+Run the generated CLI:
+
+```bash
+cd ./myapi-cli
+npm install
+node ./bin/<generated-cli-name>.js --help
+```
+
+Mutation command examples (POST/PUT/PATCH/DELETE):
+
+```bash
+# Typed body flags from request schema
+node ./bin/<generated-cli-name>.js create-item --body-name "Alice" --yes --pretty
+
+# Raw JSON body fallback
+node ./bin/<generated-cli-name>.js create-item --body '{"name":"Alice"}' --yes --pretty
+
+# JSON via stdin fallback
+echo '{"name":"Alice"}' | node ./bin/<generated-cli-name>.js create-item --body-stdin --yes --pretty
+```
 
 ## OpenAPI Architecture
 

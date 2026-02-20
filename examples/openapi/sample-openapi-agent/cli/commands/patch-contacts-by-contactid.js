@@ -14,7 +14,19 @@ const command = {
     }
   },
   "requestBody": {
-    "required": true
+    "required": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": false,
+        "description": "Updated full name"
+      },
+      "email": {
+        "type": "string",
+        "required": false,
+        "description": "Updated email"
+      }
+    }
   }
 };
 

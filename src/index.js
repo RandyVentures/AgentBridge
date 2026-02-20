@@ -1,4 +1,5 @@
 const { generate } = require('./commands/generate');
+const { init } = require('./commands/init');
 const { validate } = require('./commands/validate');
 const { scaffold } = require('./commands/scaffold');
 
@@ -6,11 +7,13 @@ function printUsage() {
   console.error(
     [
       'Usage:',
+      '  api-to-cli init --url <api-base-url> [--output <path>] [--name <cli-name>] [--version <semver>]',
       '  api-to-cli generate (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>]',
       '  api-to-cli validate (--config <path> | --spec <path-or-url>) [--name <cli-name>]',
       '  api-to-cli scaffold (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>] [--with-skill] [--with-manifest]',
       '',
       'Commands:',
+      '  init       Discover OpenAPI and generate starter config',
       '  generate   Generate a CLI from config',
       '  validate   Validate config only',
       '  scaffold   Generate CLI + optional skill/manifest bundle'
@@ -53,6 +56,11 @@ async function run(argv) {
 
   try {
     const flags = parseFlags(rest);
+
+    if (command === 'init') {
+      await init(flags);
+      return;
+    }
 
     if (command === 'generate') {
       await generate(flags);

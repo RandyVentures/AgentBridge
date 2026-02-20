@@ -8,7 +8,24 @@ const command = {
   "path": "/contacts",
   "params": {},
   "requestBody": {
-    "required": true
+    "required": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Contact full name"
+      },
+      "email": {
+        "type": "string",
+        "required": false,
+        "description": "Contact email"
+      },
+      "subscribed": {
+        "type": "boolean",
+        "required": false,
+        "description": "Newsletter subscription status"
+      }
+    }
   }
 };
 

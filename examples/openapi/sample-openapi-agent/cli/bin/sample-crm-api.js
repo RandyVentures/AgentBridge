@@ -28,6 +28,9 @@ program
   .option('--yes', 'Confirm non-GET operation')
   .option('--body <json>', 'Raw JSON request body')
   .option('--body-stdin', 'Read JSON body from stdin')
+  .option('--body-name <value>', 'Contact full name (required)')
+  .option('--body-email <value>', 'Contact email (optional)')
+  .option('--body-subscribed <value>', 'Newsletter subscription status (optional)')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd1.run(options));
 
@@ -45,6 +48,8 @@ program
   .option('--yes', 'Confirm non-GET operation')
   .option('--body <json>', 'Raw JSON request body')
   .option('--body-stdin', 'Read JSON body from stdin')
+  .option('--body-name <value>', 'Updated full name (optional)')
+  .option('--body-email <value>', 'Updated email (optional)')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd3.run(options));
 
