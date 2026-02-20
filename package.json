@@ -12,9 +12,7 @@
     "src",
     "examples",
     "README.md",
-    "LICENSE",
-    "PROJECT_BRIEF.md",
-    "SPEC.md"
+    "LICENSE"
   ],
   "engines": {
     "node": ">=18"
