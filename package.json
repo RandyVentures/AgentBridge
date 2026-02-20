@@ -1,16 +1,48 @@
 {
   "name": "api-to-cli",
-  "version": "0.1.0",
-  "description": "Generate AI-agent-friendly CLIs from API configs",
+  "version": "0.1.1",
+  "description": "Generate AI-agent-friendly CLIs, skills, and manifests from API configs",
   "license": "MIT",
   "type": "commonjs",
   "bin": {
     "api-to-cli": "./bin/api-to-cli.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "PROJECT_BRIEF.md",
+    "SPEC.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RandyVentures/AgentBridge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RandyVentures/AgentBridge/issues"
+  },
+  "homepage": "https://github.com/RandyVentures/AgentBridge#readme",
+  "keywords": [
+    "cli",
+    "api",
+    "ai-agent",
+    "generator",
+    "mcp",
+    "developer-tools"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "validate:trello": "node ./bin/api-to-cli.js validate --config ./examples/trello/api-to-cli.config.js",
     "generate:trello": "node ./bin/api-to-cli.js generate --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-cli",
     "scaffold:trello": "node ./bin/api-to-cli.js scaffold --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-agent",
-    "test:smoke": "npm run validate:trello && npm run generate:trello && npm run scaffold:trello"
+    "test:smoke": "npm run validate:trello && npm run generate:trello && npm run scaffold:trello",
+    "pack:check": "npm pack --dry-run"
   }
 }
