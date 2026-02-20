@@ -1,8 +1,8 @@
 # AgentBridge MVP Spec
 
 ## Location
-- Project folder: `/Users/randall/Developer/Src/Repos/api-to-cli`
-- This is independent from `/Users/randall/Developer/Src/Repos/Will`
+- Project folder: repository root (where this project is cloned)
+- This project is standalone and not nested inside another repo
 
 ## Product Identity
 - Product name: `AgentBridge`

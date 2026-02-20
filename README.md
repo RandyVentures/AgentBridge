@@ -21,8 +21,8 @@ This means anyone can create a CLI layer for an API, even if the API owner never
   - JSON error envelope
   - Env-var auth injection (`header` or `query`)
 
-## Project Location
-- `/Users/randall/Developer/Src/Repos/api-to-cli`
+## Project Setup
+Clone this repository to any local folder and run commands from the repo root.
 
 ## Core Commands
 
