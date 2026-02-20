@@ -11,8 +11,8 @@ npm link
 
 ## Commands
 
-- `sample-crm-api listcontacts` - List contacts
-- `sample-crm-api createcontact` - Create contact
+- `sample-crm-api list-contacts` - List contacts
+- `sample-crm-api create-contact` - Create contact
 - `sample-crm-api get-contacts-by-contactid` - Get contact by ID
 - `sample-crm-api patch-contacts-by-contactid` - Update contact fields
 - `sample-crm-api delete-contacts-by-contactid` - Delete contact

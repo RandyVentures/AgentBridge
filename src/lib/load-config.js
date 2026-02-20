@@ -125,6 +125,14 @@ function validateConfig(config) {
     validateAuth(config.auth);
   }
 
+  const commandNames = new Set();
+  config.commands.forEach((command, index) => {
+    if (commandNames.has(command.name)) {
+      fail(`commands[${index}].name duplicates an existing command: ${command.name}`);
+    }
+    commandNames.add(command.name);
+  });
+
   config.commands.forEach(validateCommand);
 }
 

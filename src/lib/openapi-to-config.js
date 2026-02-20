@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { validateConfig } = require('./load-config');
+const { toKebab } = require('./config-utils');
 
 function isUrl(value) {
   return /^https?:\/\//i.test(String(value));
@@ -137,11 +138,7 @@ function inferType(parameter) {
 
 function buildCommandName(method, routePath, operation) {
   if (operation.operationId && String(operation.operationId).trim()) {
-    return String(operation.operationId)
-      .trim()
-      .replace(/[^a-zA-Z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .toLowerCase();
+    return toKebab(String(operation.operationId).trim());
   }
 
   const parts = routePath

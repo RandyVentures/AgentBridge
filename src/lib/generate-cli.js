@@ -6,6 +6,11 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+function resetDir(dirPath) {
+  fs.rmSync(dirPath, { recursive: true, force: true });
+  fs.mkdirSync(dirPath, { recursive: true });
+}
+
 function commandToMethodName(commandName) {
   return String(commandName)
     .split(/[^a-zA-Z0-9]/)
@@ -460,9 +465,9 @@ function generateCliProject({ config, outputPath }) {
   const libDir = path.join(outputPath, 'lib');
 
   ensureDir(outputPath);
-  ensureDir(binDir);
-  ensureDir(commandsDir);
-  ensureDir(libDir);
+  resetDir(binDir);
+  resetDir(commandsDir);
+  resetDir(libDir);
 
   writeFile(path.join(outputPath, 'package.json'), renderPackageJson(config));
   writeFile(path.join(outputPath, 'README.md'), renderReadme(config));

@@ -2,20 +2,34 @@ const { request } = require('../lib/client');
 const output = require('../lib/output');
 
 const command = {
-  "name": "listcontacts",
-  "description": "List contacts",
-  "method": "GET",
+  "name": "create-contact",
+  "description": "Create contact",
+  "method": "POST",
   "path": "/contacts",
-  "params": {
-    "limit": {
-      "type": "number",
-      "required": false,
-      "description": "Max contacts to return"
+  "params": {},
+  "requestBody": {
+    "required": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Contact full name"
+      },
+      "email": {
+        "type": "string",
+        "required": false,
+        "description": "Contact email"
+      },
+      "subscribed": {
+        "type": "boolean",
+        "required": false,
+        "description": "Newsletter subscription status"
+      }
     }
   }
 };
 
-async function listcontacts(options) {
+async function createContact(options) {
   try {
     if (command.method !== 'GET' && !options.yes) {
       throw new Error('This operation changes state. Re-run with --yes to confirm.');
@@ -40,6 +54,6 @@ async function listcontacts(options) {
 }
 
 module.exports = {
-  run: listcontacts,
+  run: createContact,
   command
 };

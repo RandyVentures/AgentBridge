@@ -12,6 +12,7 @@ This means anyone can create a CLI layer for an API, even if the API owner never
 
 ## Current Scope
 - Generator commands:
+  - `doctor`
   - `init`
   - `validate`
   - `generate`
@@ -47,22 +48,25 @@ Use either `npx api-to-cli` or `api-to-cli` (if globally installed).
 npx api-to-cli validate \
   --config ./examples/trello/api-to-cli.config.js
 
-# 2) Bootstrap a config from an API base URL
+# 2) Diagnose environment and input before generation
+npx api-to-cli doctor --url https://api.example.com
+
+# 3) Bootstrap a config from an API base URL
 npx api-to-cli init \
   --url https://api.example.com \
   --output ./api-to-cli.config.js
 
-# 3) Generate from custom config
+# 4) Generate from custom config
 npx api-to-cli generate \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-cli
 
-# 4) Generate from OpenAPI spec (local file or URL)
+# 5) Generate from OpenAPI spec (local file or URL)
 npx api-to-cli generate \
   --spec ./examples/openapi/sample-openapi.yaml \
   --output ./examples/openapi/sample-openapi-cli
 
-# 5) Generate a full agent bundle (CLI + skill + manifest)
+# 6) Generate a full agent bundle (CLI + skill + manifest)
 npx api-to-cli scaffold \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-agent
@@ -132,6 +136,31 @@ flowchart LR
 - Optional flags:
   - `--name <cli-name>`
   - `--version <semver>`
+
+### URL Init Architecture
+
+```mermaid
+flowchart TD
+  U[--url API base] --> C[Build candidate spec URLs]
+  C --> T[Try candidate endpoints]
+  T -->|Spec found| P[Parse OpenAPI]
+  P --> M[Map to api-to-cli config]
+  M --> W1[Write api-to-cli.config.js]
+  T -->|No spec found| S[Create starter config template]
+  S --> W2[Write api-to-cli.config.js]
+  W1 --> N[Run generate/scaffold]
+  W2 --> N
+```
+
+## Doctor Command
+- Command: `api-to-cli doctor [--config <path>] [--spec <path-or-url>] [--url <api-base-url>]`
+- Checks include:
+  - Node runtime compatibility
+  - fetch availability
+  - working directory writability
+  - config/spec validation (when provided)
+  - OpenAPI discovery hints for URL inputs
+- Output is JSON with pass/fail checks and suggested fixes.
 
 ## OpenAPI Quickstart
 

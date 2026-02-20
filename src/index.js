@@ -1,3 +1,4 @@
+const { doctor } = require('./commands/doctor');
 const { generate } = require('./commands/generate');
 const { init } = require('./commands/init');
 const { validate } = require('./commands/validate');
@@ -7,15 +8,17 @@ function printUsage() {
   console.error(
     [
       'Usage:',
+      '  api-to-cli doctor [--config <path>] [--spec <path-or-url>] [--url <api-base-url>]',
       '  api-to-cli init --url <api-base-url> [--output <path>] [--name <cli-name>] [--version <semver>]',
       '  api-to-cli generate (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>]',
       '  api-to-cli validate (--config <path> | --spec <path-or-url>) [--name <cli-name>]',
       '  api-to-cli scaffold (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>] [--with-skill] [--with-manifest]',
       '',
       'Commands:',
+      '  doctor     Run environment and input diagnostics',
       '  init       Discover OpenAPI and generate starter config',
-      '  generate   Generate a CLI from config',
-      '  validate   Validate config only',
+      '  generate   Generate a CLI from config/spec',
+      '  validate   Validate config/spec only',
       '  scaffold   Generate CLI + optional skill/manifest bundle'
     ].join('\n')
   );
@@ -56,6 +59,11 @@ async function run(argv) {
 
   try {
     const flags = parseFlags(rest);
+
+    if (command === 'doctor') {
+      await doctor(flags);
+      return;
+    }
 
     if (command === 'init') {
       await init(flags);

@@ -16,17 +16,17 @@ Use the generated sample-crm-api CLI from AgentBridge. Always prefer JSON output
 - No auth env vars required
 
 ## Commands
-- listcontacts: List contacts
+- list-contacts: List contacts
   - --limit <value> (optional)
-  - example: sample-crm-api listcontacts --limit <value>
-- createcontact: Create contact
+  - example: sample-crm-api list-contacts --limit <value>
+- create-contact: Create contact
   - --yes (required for non-GET operations)
   - --body <json> (raw JSON body fallback)
   - --body-stdin (read JSON body from stdin)
   - --body-name <value> (required)
   - --body-email <value> (optional)
   - --body-subscribed <value> (optional)
-  - example: sample-crm-api createcontact --yes --body-name <value> --body-email <value> --body-subscribed <value> --body '{"key":"value"}'
+  - example: sample-crm-api create-contact --yes --body-name <value> --body-email <value> --body-subscribed <value> --body '{"key":"value"}'
 - get-contacts-by-contactid: Get contact by ID
   - --contact-id <value> (required)
   - example: sample-crm-api get-contacts-by-contactid --contact-id <value>

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "generatedBy": "AgentBridge",
-  "generatedAt": "2026-02-20T01:43:58.019Z",
+  "generatedAt": "2026-02-20T01:48:45.765Z",
   "project": {
     "name": "sample-crm-api",
     "version": "1.0.0"
@@ -20,7 +20,7 @@
   },
   "commands": [
     {
-      "name": "listcontacts",
+      "name": "list-contacts",
       "description": "List contacts",
       "method": "GET",
       "path": "/contacts",
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "name": "createcontact",
+      "name": "create-contact",
       "description": "Create contact",
       "method": "POST",
       "path": "/contacts",

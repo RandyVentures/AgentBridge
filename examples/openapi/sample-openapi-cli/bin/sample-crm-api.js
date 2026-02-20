@@ -2,8 +2,8 @@
 
 const { Command } = require('commander');
 
-const cmd0 = require('../commands/listcontacts');
-const cmd1 = require('../commands/createcontact');
+const cmd0 = require('../commands/list-contacts');
+const cmd1 = require('../commands/create-contact');
 const cmd2 = require('../commands/get-contacts-by-contactid');
 const cmd3 = require('../commands/patch-contacts-by-contactid');
 const cmd4 = require('../commands/delete-contacts-by-contactid');
@@ -16,14 +16,14 @@ program
   .version('1.0.0');
 
 program
-  .command('listcontacts')
+  .command('list-contacts')
   .description('List contacts')
   .option('--limit <value>', 'Max contacts to return')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd0.run(options));
 
 program
-  .command('createcontact')
+  .command('create-contact')
   .description('Create contact')
   .option('--yes', 'Confirm non-GET operation')
   .option('--body <json>', 'Raw JSON request body')
