@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: Sample CRM API
+  version: 1.0.0
+servers:
+  - url: https://api.example-crm.com/v1
+paths:
+  /contacts:
+    get:
+      summary: List contacts
+      operationId: listContacts
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: Max contacts to return
+    post:
+      summary: Create contact
+      operationId: createContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Contact full name
+                email:
+                  type: string
+                  description: Contact email
+                subscribed:
+                  type: boolean
+                  description: Newsletter subscription status
+    
+  /contacts/{contactId}:
+    parameters:
+      - in: path
+        name: contactId
+        required: true
+        schema:
+          type: string
+        description: Contact ID
+    get:
+      summary: Get contact by ID
+    patch:
+      summary: Update contact fields
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated full name
+                email:
+                  type: string
+                  description: Updated email
+    delete:
+      summary: Delete contact

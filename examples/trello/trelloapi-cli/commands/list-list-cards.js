@@ -17,6 +17,10 @@ const command = {
 
 async function listListCards(options) {
   try {
+    if (command.method !== 'GET' && !options.yes) {
+      throw new Error('This operation changes state. Re-run with --yes to confirm.');
+    }
+
     const data = await request(command, options);
     output.json(data, Boolean(options.pretty));
   } catch (error) {

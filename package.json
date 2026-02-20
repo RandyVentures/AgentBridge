@@ -36,11 +36,17 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
   "scripts": {
     "validate:trello": "node ./bin/api-to-cli.js validate --config ./examples/trello/api-to-cli.config.js",
     "generate:trello": "node ./bin/api-to-cli.js generate --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-cli",
     "scaffold:trello": "node ./bin/api-to-cli.js scaffold --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-agent",
-    "test:smoke": "npm run validate:trello && npm run generate:trello && npm run scaffold:trello",
+    "validate:openapi": "node ./bin/api-to-cli.js validate --spec ./examples/openapi/sample-openapi.yaml",
+    "generate:openapi": "node ./bin/api-to-cli.js generate --spec ./examples/openapi/sample-openapi.yaml --output ./examples/openapi/sample-openapi-cli",
+    "scaffold:openapi": "node ./bin/api-to-cli.js scaffold --spec ./examples/openapi/sample-openapi.yaml --output ./examples/openapi/sample-openapi-agent",
+    "test:smoke": "npm run validate:trello && npm run generate:trello && npm run scaffold:trello && npm run validate:openapi && npm run generate:openapi && npm run scaffold:openapi",
     "pack:check": "npm pack --dry-run"
   }
 }

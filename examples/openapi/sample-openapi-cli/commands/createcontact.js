@@ -2,20 +2,34 @@ const { request } = require('../lib/client');
 const output = require('../lib/output');
 
 const command = {
-  "name": "list-board-lists",
-  "description": "List lists on a board",
-  "method": "GET",
-  "path": "/boards/{boardId}/lists",
-  "params": {
-    "boardId": {
-      "type": "string",
-      "required": true,
-      "description": "Trello board ID"
+  "name": "createcontact",
+  "description": "Create contact",
+  "method": "POST",
+  "path": "/contacts",
+  "params": {},
+  "requestBody": {
+    "required": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Contact full name"
+      },
+      "email": {
+        "type": "string",
+        "required": false,
+        "description": "Contact email"
+      },
+      "subscribed": {
+        "type": "boolean",
+        "required": false,
+        "description": "Newsletter subscription status"
+      }
     }
   }
 };
 
-async function listBoardLists(options) {
+async function createcontact(options) {
   try {
     if (command.method !== 'GET' && !options.yes) {
       throw new Error('This operation changes state. Re-run with --yes to confirm.');
@@ -40,6 +54,6 @@ async function listBoardLists(options) {
 }
 
 module.exports = {
-  run: listBoardLists,
+  run: createcontact,
   command
 };

@@ -2,20 +2,20 @@ const { request } = require('../lib/client');
 const output = require('../lib/output');
 
 const command = {
-  "name": "list-board-lists",
-  "description": "List lists on a board",
-  "method": "GET",
-  "path": "/boards/{boardId}/lists",
+  "name": "delete-contacts-by-contactid",
+  "description": "Delete contact",
+  "method": "DELETE",
+  "path": "/contacts/{contactId}",
   "params": {
-    "boardId": {
+    "contactId": {
       "type": "string",
       "required": true,
-      "description": "Trello board ID"
+      "description": "Contact ID"
     }
   }
 };
 
-async function listBoardLists(options) {
+async function deleteContactsByContactid(options) {
   try {
     if (command.method !== 'GET' && !options.yes) {
       throw new Error('This operation changes state. Re-run with --yes to confirm.');
@@ -40,6 +40,6 @@ async function listBoardLists(options) {
 }
 
 module.exports = {
-  run: listBoardLists,
+  run: deleteContactsByContactid,
   command
 };

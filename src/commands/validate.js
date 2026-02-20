@@ -1,25 +1,21 @@
-const path = require('path');
-const { loadConfig } = require('../lib/load-config');
+const { resolveConfigInput } = require('../lib/resolve-config-input');
 
 async function validate(flags) {
-  if (!flags.config) {
-    throw new Error('Missing required flag: --config <path>');
-  }
-
-  const configPath = path.resolve(process.cwd(), String(flags.config));
-  const config = loadConfig(configPath);
+  const { config, source } = await resolveConfigInput(flags);
 
   console.log(
     JSON.stringify({
       ok: true,
       command: 'validate',
-      configPath,
+      inputType: source.type,
+      input: source.value,
       summary: {
         name: config.name,
         version: config.version,
         apiBase: config.apiBase,
         commandCount: config.commands.length,
-        hasAuth: Boolean(config.auth && config.auth.credentials && config.auth.credentials.length)
+        hasAuth: Boolean(config.auth && config.auth.credentials && config.auth.credentials.length),
+        methods: [...new Set(config.commands.map((command) => command.method))]
       }
     })
   );

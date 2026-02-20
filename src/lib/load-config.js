@@ -60,8 +60,9 @@ function validateCommand(command, index) {
     fail(`commands[${index}].description must be a non-empty string`);
   }
 
-  if (command.method !== 'GET') {
-    fail(`commands[${index}].method must be GET for MVP`);
+  const allowedMethods = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
+  if (!allowedMethods.has(command.method)) {
+    fail(`commands[${index}].method must be one of: GET, POST, PUT, PATCH, DELETE`);
   }
 
   if (typeof command.path !== 'string' || !command.path.startsWith('/')) {
@@ -70,6 +71,32 @@ function validateCommand(command, index) {
 
   if (command.params !== undefined && !isObject(command.params)) {
     fail(`commands[${index}].params must be an object when provided`);
+  }
+
+  if (command.requestBody !== undefined) {
+    if (!isObject(command.requestBody)) {
+      fail(`commands[${index}].requestBody must be an object when provided`);
+    }
+
+    if (command.requestBody.required !== undefined && typeof command.requestBody.required !== 'boolean') {
+      fail(`commands[${index}].requestBody.required must be a boolean when provided`);
+    }
+
+    if (command.requestBody.properties !== undefined) {
+      if (!isObject(command.requestBody.properties)) {
+        fail(`commands[${index}].requestBody.properties must be an object when provided`);
+      }
+
+      Object.entries(command.requestBody.properties).forEach(([propName, propSchema]) => {
+        if (!isObject(propSchema)) {
+          fail(`commands[${index}].requestBody.properties.${propName} must be an object`);
+        }
+
+        if (propSchema.required !== undefined && typeof propSchema.required !== 'boolean') {
+          fail(`commands[${index}].requestBody.properties.${propName}.required must be boolean`);
+        }
+      });
+    }
   }
 }
 
@@ -116,5 +143,6 @@ function loadConfig(configPath) {
 }
 
 module.exports = {
-  loadConfig
+  loadConfig,
+  validateConfig
 };

@@ -6,9 +6,9 @@ function printUsage() {
   console.error(
     [
       'Usage:',
-      '  api-to-cli generate --config <path> --output <dir>',
-      '  api-to-cli validate --config <path>',
-      '  api-to-cli scaffold --config <path> --output <dir> [--with-skill] [--with-manifest]',
+      '  api-to-cli generate (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>]',
+      '  api-to-cli validate (--config <path> | --spec <path-or-url>) [--name <cli-name>]',
+      '  api-to-cli scaffold (--config <path> | --spec <path-or-url>) --output <dir> [--name <cli-name>] [--with-skill] [--with-manifest]',
       '',
       'Commands:',
       '  generate   Generate a CLI from config',

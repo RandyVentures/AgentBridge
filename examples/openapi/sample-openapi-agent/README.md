@@ -2,7 +2,7 @@
 
 ## Contents
 - CLI project: ./cli
-- Input source: config (/Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/api-to-cli.config.js)
+- Input source: spec (./examples/openapi/sample-openapi.yaml)
 - Skill file: ./skill/SKILL.md
 - Manifest: ./agentbridge.manifest.json
 

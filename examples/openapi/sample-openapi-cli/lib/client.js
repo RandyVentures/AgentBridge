@@ -158,18 +158,7 @@ function buildRequestBody(command, options) {
 
 async function request(command, options) {
   const auth = {
-  "credentials": [
-    {
-      "envVar": "TRELLO_KEY",
-      "in": "query",
-      "name": "key"
-    },
-    {
-      "envVar": "TRELLO_TOKEN",
-      "in": "query",
-      "name": "token"
-    }
-  ]
+  "credentials": []
 };
   const params = new URLSearchParams();
   const commandParams = command.params || {};
@@ -218,7 +207,7 @@ async function request(command, options) {
   });
 
   const query = params.toString();
-  const url = 'https://api.trello.com/1' + resolvedPath + (query ? '?' + query : '');
+  const url = 'https://api.example-crm.com/v1' + resolvedPath + (query ? '?' + query : '');
   const requestBody = buildRequestBody(command, options);
 
   if (requestBody !== null) {

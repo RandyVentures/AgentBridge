@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { loadConfig } = require('../lib/load-config');
 const { generateCliProject } = require('../lib/generate-cli');
 const { writeSkillPackage } = require('../lib/generate-skill');
 const { buildManifest, writeManifest } = require('../lib/generate-manifest');
+const { resolveConfigInput } = require('../lib/resolve-config-input');
 
 function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
@@ -31,7 +31,8 @@ function writeScaffoldReadme(outputPath, data) {
     '# AgentBridge Scaffold Output',
     '',
     '## Contents',
-    `- CLI project: ${data.cliProjectPath}`
+    `- CLI project: ${data.cliProjectPath}`,
+    `- Input source: ${data.inputType} (${data.inputValue})`
   ];
 
   if (data.skillPath) {
@@ -48,10 +49,6 @@ function writeScaffoldReadme(outputPath, data) {
 }
 
 async function scaffold(flags) {
-  if (!flags.config) {
-    throw new Error('Missing required flag: --config <path>');
-  }
-
   if (!flags.output) {
     throw new Error('Missing required flag: --output <dir>');
   }
@@ -61,11 +58,10 @@ async function scaffold(flags) {
   const skillRelativePath = './skill/SKILL.md';
   const manifestRelativePath = './agentbridge.manifest.json';
 
-  const configPath = path.resolve(process.cwd(), String(flags.config));
   const outputPath = path.resolve(process.cwd(), String(flags.output));
   const cliProjectPath = path.join(outputPath, 'cli');
+  const { config, source } = await resolveConfigInput(flags);
 
-  const config = loadConfig(configPath);
   fs.mkdirSync(outputPath, { recursive: true });
 
   generateCliProject({
@@ -89,7 +85,9 @@ async function scaffold(flags) {
   writeScaffoldReadme(outputPath, {
     cliProjectPath: cliRelativePath,
     skillPath,
-    manifestPath
+    manifestPath,
+    inputType: source.type,
+    inputValue: source.value
   });
 
   console.log(
@@ -97,6 +95,8 @@ async function scaffold(flags) {
       ok: true,
       command: 'scaffold',
       outputPath,
+      inputType: source.type,
+      input: source.value,
       cliProjectPath: cliRelativePath,
       skillPath,
       manifestPath,

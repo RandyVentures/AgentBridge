@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "generatedBy": "AgentBridge",
+  "generatedAt": "2026-02-20T01:38:21.698Z",
+  "project": {
+    "name": "sample-crm-api",
+    "version": "1.0.0"
+  },
+  "cli": {
+    "projectPath": "./cli",
+    "packageName": "sample-crm-api-cli",
+    "binary": "sample-crm-api",
+    "install": [
+      "npm install",
+      "npm link"
+    ]
+  },
+  "auth": {
+    "envVars": []
+  },
+  "commands": [
+    {
+      "name": "listcontacts",
+      "description": "List contacts",
+      "method": "GET",
+      "path": "/contacts",
+      "params": [
+        {
+          "name": "limit",
+          "required": false,
+          "description": "Max contacts to return"
+        }
+      ]
+    },
+    {
+      "name": "createcontact",
+      "description": "Create contact",
+      "method": "POST",
+      "path": "/contacts",
+      "params": []
+    },
+    {
+      "name": "get-contacts-by-contactid",
+      "description": "Get contact by ID",
+      "method": "GET",
+      "path": "/contacts/{contactId}",
+      "params": [
+        {
+          "name": "contactId",
+          "required": true,
+          "description": "Contact ID"
+        }
+      ]
+    },
+    {
+      "name": "patch-contacts-by-contactid",
+      "description": "Update contact fields",
+      "method": "PATCH",
+      "path": "/contacts/{contactId}",
+      "params": [
+        {
+          "name": "contactId",
+          "required": true,
+          "description": "Contact ID"
+        }
+      ]
+    },
+    {
+      "name": "delete-contacts-by-contactid",
+      "description": "Delete contact",
+      "method": "DELETE",
+      "path": "/contacts/{contactId}",
+      "params": [
+        {
+          "name": "contactId",
+          "required": true,
+          "description": "Contact ID"
+        }
+      ]
+    }
+  ],
+  "agent": {
+    "skillPath": "./skill/SKILL.md"
+  }
+}

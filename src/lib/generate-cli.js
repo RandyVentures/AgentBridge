@@ -66,7 +66,165 @@ module.exports = {
 function renderClientLib(config) {
   const authConfig = JSON.stringify(config.auth || { credentials: [] }, null, 2);
 
-  return `async function request(command, options) {
+  return `const fs = require('fs');
+
+function toKebab(name) {
+  return String(name)
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function toCamelCase(name) {
+  return String(name).replace(/[-_]+([a-zA-Z0-9])/g, (_m, g1) => g1.toUpperCase());
+}
+
+function readOption(options, name) {
+  if (Object.prototype.hasOwnProperty.call(options, name)) {
+    return options[name];
+  }
+
+  const camel = toCamelCase(name);
+  if (Object.prototype.hasOwnProperty.call(options, camel)) {
+    return options[camel];
+  }
+
+  return undefined;
+}
+
+function coerceValue(value, type) {
+  if (value === undefined || value === null || value === '') {
+    return value;
+  }
+
+  if (type === 'number') {
+    const parsed = Number(value);
+    if (Number.isNaN(parsed)) {
+      throw new Error(\`Expected number but received: \${value}\`);
+    }
+    return parsed;
+  }
+
+  if (type === 'boolean') {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    const normalized = String(value).toLowerCase();
+    if (normalized === 'true' || normalized === '1') {
+      return true;
+    }
+
+    if (normalized === 'false' || normalized === '0') {
+      return false;
+    }
+
+    throw new Error(\`Expected boolean but received: \${value}\`);
+  }
+
+  return String(value);
+}
+
+function parseJsonText(raw, label) {
+  try {
+    return JSON.parse(raw);
+  } catch (_error) {
+    throw new Error(\`Invalid JSON for \${label}\`);
+  }
+}
+
+function parseJsonBody(rawBody) {
+  if (rawBody === undefined || rawBody === null || rawBody === '') {
+    return null;
+  }
+
+  return parseJsonText(rawBody, '--body');
+}
+
+function parseBodyFromStdin(enabled) {
+  if (!enabled) {
+    return null;
+  }
+
+  const raw = fs.readFileSync(0, 'utf8').trim();
+  if (!raw) {
+    throw new Error('Expected JSON on stdin because --body-stdin was provided');
+  }
+
+  return parseJsonText(raw, '--body-stdin');
+}
+
+function buildRequestBody(command, options) {
+  const requestBody = command.requestBody || null;
+  if (!requestBody) {
+    return null;
+  }
+
+  const direct = parseJsonBody(readOption(options, 'body'));
+  const stdin = parseBodyFromStdin(Boolean(readOption(options, 'body-stdin')));
+
+  if (direct !== null && stdin !== null) {
+    throw new Error('Use either --body or --body-stdin, not both');
+  }
+
+  const properties = requestBody.properties || {};
+  const hasBodyProps = Object.keys(properties).length > 0;
+
+  let payload = direct !== null ? direct : stdin !== null ? stdin : hasBodyProps ? {} : null;
+  if (payload !== null && (typeof payload !== 'object' || Array.isArray(payload))) {
+    throw new Error('Request body must be a JSON object');
+  }
+
+  if (payload === null && requestBody.required) {
+    throw new Error('Missing required request body. Provide --body, --body-stdin, or body field flags.');
+  }
+
+  let hadBodyFlag = false;
+  Object.entries(properties).forEach(([propName, schema]) => {
+    const optionName = \`body-\${toKebab(propName)}\`;
+    const raw = readOption(options, optionName);
+    if (raw === undefined || raw === null || raw === '') {
+      return;
+    }
+
+    if (payload === null) {
+      payload = {};
+    }
+
+    payload[propName] = coerceValue(raw, schema.type);
+    hadBodyFlag = true;
+  });
+
+  if (hasBodyProps) {
+    if (payload === null) {
+      payload = {};
+    }
+
+    Object.entries(properties).forEach(([propName, schema]) => {
+      if (!schema.required) {
+        return;
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(payload, propName) || payload[propName] === undefined || payload[propName] === null || payload[propName] === '') {
+        const optionName = \`--body-\${toKebab(propName)}\`;
+        throw new Error(\`Missing required request body field: \${optionName}\`);
+      }
+    });
+  }
+
+  if (payload !== null) {
+    const isEmptyObject = typeof payload === 'object' && !Array.isArray(payload) && Object.keys(payload).length === 0;
+    if (isEmptyObject && !requestBody.required && !hadBodyFlag && direct === null && stdin === null) {
+      return null;
+    }
+  }
+
+  return payload;
+}
+
+async function request(command, options) {
   const auth = ${authConfig};
   const params = new URLSearchParams();
   const commandParams = command.params || {};
@@ -93,16 +251,17 @@ function renderClientLib(config) {
   });
 
   Object.entries(commandParams).forEach(([name, schema]) => {
-    const value = options[name];
+    const raw = readOption(options, name);
 
-    if ((value === undefined || value === null || value === '') && schema.required) {
+    if ((raw === undefined || raw === null || raw === '') && schema.required) {
       throw new Error(\`Missing required parameter: --\${name}\`);
     }
 
-    if (value === undefined || value === null || value === '') {
+    if (raw === undefined || raw === null || raw === '') {
       return;
     }
 
+    const value = coerceValue(raw, schema.type);
     const token = \`{\${name}}\`;
 
     if (resolvedPath.includes(token)) {
@@ -115,29 +274,35 @@ function renderClientLib(config) {
 
   const query = params.toString();
   const url = '${config.apiBase}' + resolvedPath + (query ? '?' + query : '');
+  const requestBody = buildRequestBody(command, options);
+
+  if (requestBody !== null) {
+    headers['content-type'] = 'application/json';
+  }
 
   const response = await fetch(url, {
     method: command.method,
-    headers
+    headers,
+    body: requestBody !== null ? JSON.stringify(requestBody) : undefined
   });
 
   const text = await response.text();
-  let body = text;
+  let responseBody = text;
 
   try {
-    body = text ? JSON.parse(text) : null;
+    responseBody = text ? JSON.parse(text) : null;
   } catch (_err) {
-    body = text;
+    responseBody = text;
   }
 
   if (!response.ok) {
     const error = new Error(\`HTTP \${response.status}\`);
     error.statusCode = response.status;
-    error.responseBody = body;
+    error.responseBody = responseBody;
     throw error;
   }
 
-  return body;
+  return responseBody;
 }
 
 module.exports = {
@@ -157,6 +322,10 @@ const command = ${serializedCommand};
 
 async function ${functionName}(options) {
   try {
+    if (command.method !== 'GET' && !options.yes) {
+      throw new Error('This operation changes state. Re-run with --yes to confirm.');
+    }
+
     const data = await request(command, options);
     output.json(data, Boolean(options.pretty));
   } catch (error) {
@@ -194,7 +363,7 @@ function renderBinFile(config) {
     .map((command, index) => {
       const varName = `cmd${index}`;
       const params = command.params || {};
-      const options = Object.entries(params)
+      const paramOptions = Object.entries(params)
         .map(([paramName, schema]) => {
           const flagName = `--${toKebab(paramName)} <value>`;
           const desc = schema.description || `${paramName} parameter`;
@@ -202,10 +371,29 @@ function renderBinFile(config) {
         })
         .join('\n');
 
+      const bodyProps = (command.requestBody && command.requestBody.properties) || {};
+      const bodyOptions = Object.entries(bodyProps)
+        .map(([propName, schema]) => {
+          const flagName = `--body-${toKebab(propName)} <value>`;
+          const req = schema.required ? 'required' : 'optional';
+          const desc = schema.description || `${propName} body field`;
+          return `  .option('${flagName}', '${desc} (${req})')`;
+        })
+        .join('\n');
+
+      const mutationOptions = command.method !== 'GET'
+        ? [
+            `  .option('--yes', 'Confirm non-GET operation')`,
+            command.requestBody ? `  .option('--body <json>', 'Raw JSON request body')` : null,
+            command.requestBody ? `  .option('--body-stdin', 'Read JSON body from stdin')` : null,
+            bodyOptions || null
+          ].filter(Boolean).join('\n')
+        : '';
+
       return `program
   .command('${command.name}')
   .description('${command.description.replace(/'/g, "\\'")}')
-${options ? `${options}\n` : ''}  .option('--pretty', 'Pretty-print JSON')
+${paramOptions ? `${paramOptions}\n` : ''}${mutationOptions ? `${mutationOptions}\n` : ''}  .option('--pretty', 'Pretty-print JSON')
   .action((options) => ${varName}.run(options));`;
     })
     .join('\n\n');

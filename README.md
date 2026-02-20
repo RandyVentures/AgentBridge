@@ -16,10 +16,11 @@ This means anyone can create a CLI layer for an API, even if the API owner never
   - `generate`
   - `scaffold`
 - Generated CLI support:
-  - GET endpoints (MVP)
+  - GET, POST, PUT, PATCH, DELETE
   - JSON output by default
   - JSON error envelope
   - Env-var auth injection (`header` or `query`)
+  - Safe guard for state-changing operations (`--yes` required)
 
 ## Install and Run
 
@@ -41,16 +42,21 @@ api-to-cli --help
 Use either `npx api-to-cli` or `api-to-cli` (if globally installed).
 
 ```bash
-# 1) Validate config only
+# 1) Validate from custom config
 npx api-to-cli validate \
   --config ./examples/trello/api-to-cli.config.js
 
-# 2) Generate only the CLI project
+# 2) Generate from custom config
 npx api-to-cli generate \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-cli
 
-# 3) Generate a full agent bundle (CLI + skill + manifest)
+# 3) Generate from OpenAPI spec (local file or URL)
+npx api-to-cli generate \
+  --spec ./examples/openapi/sample-openapi.yaml \
+  --output ./examples/openapi/sample-openapi-cli
+
+# 4) Generate a full agent bundle (CLI + skill + manifest)
 npx api-to-cli scaffold \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-agent
@@ -103,6 +109,38 @@ flowchart LR
 2. Agent reads `skill/SKILL.md` for operating rules and command examples.
 3. Agent executes the generated CLI and parses JSON stdout/stderr.
 
+## OpenAPI Notes
+- Supported input: OpenAPI 3.x JSON or YAML (`--spec <path-or-url>`)
+- Command names are derived from `operationId` when available, otherwise method + path
+- Path/query parameters are converted into CLI flags
+- For `POST/PUT/PATCH/DELETE`, generated commands require `--yes`
+- If OpenAPI operation has JSON object requestBody, generated command creates typed body flags like `--body-name`
+- Generated commands also support `--body <json>` and `--body-stdin` as fallback modes
+
+## OpenAPI Architecture
+
+```mermaid
+flowchart TD
+  SPEC[OpenAPI JSON/YAML] --> PARSE[OpenAPI Parser]
+  PARSE --> MAP[Map operations to command config]
+  MAP --> PARAMS[Path/query params to CLI flags]
+  MAP --> BODY[JSON body schema to body flags]
+  BODY --> FLAGS[--body-field flags]
+  BODY --> FALLBACK[--body / --body-stdin fallback]
+  MAP --> SAFETY[Non-GET safety: --yes required]
+  PARAMS --> GEN[CLI Generator]
+  FLAGS --> GEN
+  FALLBACK --> GEN
+  SAFETY --> GEN
+  GEN --> OUT[Generated CLI + Skill + Manifest]
+```
+
+## Sample OpenAPI Spec
+- Included at `examples/openapi/sample-openapi.yaml`
+- Includes GET and mutation operations with JSON request bodies
+- Generated CLI output: `examples/openapi/sample-openapi-cli`
+- Generated agent bundle output: `examples/openapi/sample-openapi-agent`
+
 ## Suggested Usage Flows
 
 ### Flow A: Local Personal Use (No API Owner Needed)
@@ -145,6 +183,9 @@ This runs:
 - `validate:trello`
 - `generate:trello`
 - `scaffold:trello`
+- `validate:openapi`
+- `generate:openapi`
+- `scaffold:openapi`
 
 ## Notes
 - Generated CLIs depend on `commander`.

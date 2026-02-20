@@ -11,18 +11,40 @@ function renderSkill(config, cliProjectPath) {
 
   const commandDocs = config.commands
     .map((command) => {
-      const flags = Object.entries(command.params || {})
+      const paramFlags = Object.entries(command.params || {})
         .map(([name, schema]) => {
           const flag = `--${toKebab(name)} <value>`;
           const req = schema.required ? 'required' : 'optional';
           return `  - ${flag} (${req})`;
         })
         .join('\n');
+      const mutationFlags = command.method !== 'GET'
+        ? [
+            '  - --yes (required for non-GET operations)',
+            command.requestBody ? '  - --body <json> (raw JSON body fallback)' : null,
+            command.requestBody ? '  - --body-stdin (read JSON body from stdin)' : null,
+            ...(command.requestBody && command.requestBody.properties
+              ? Object.entries(command.requestBody.properties).map(([propName, schema]) => {
+                  const req = schema.required ? 'required' : 'optional';
+                  return `  - --body-${toKebab(propName)} <value> (${req})`;
+                })
+              : [])
+          ].filter(Boolean).join('\n')
+        : '';
+      const flags = [paramFlags, mutationFlags].filter(Boolean).join('\n');
+      const exampleFlags = [
+        ...Object.keys(command.params || {}).map((p) => `--${toKebab(p)} <value>`),
+        ...(command.method !== 'GET' ? ['--yes'] : []),
+        ...(command.requestBody && command.requestBody.properties
+          ? Object.keys(command.requestBody.properties).map((p) => `--body-${toKebab(p)} <value>`)
+          : []),
+        ...(command.requestBody ? ["--body '{\"key\":\"value\"}'"] : [])
+      ].join(' ');
 
       return [
         `- ${command.name}: ${command.description}`,
         flags || '  - no params',
-        `  - example: ${binName} ${command.name}${flags ? ` ${Object.keys(command.params || {}).map((p) => `--${toKebab(p)} <value>`).join(' ')}` : ''}`
+        `  - example: ${binName} ${command.name}${exampleFlags ? ` ${exampleFlags}` : ''}`
       ].join('\n');
     })
     .join('\n');
