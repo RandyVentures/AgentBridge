@@ -21,25 +21,47 @@ This means anyone can create a CLI layer for an API, even if the API owner never
   - JSON error envelope
   - Env-var auth injection (`header` or `query`)
 
-## Project Setup
-Clone this repository to any local folder and run commands from the repo root.
+## Install and Run
+
+### Option A: Run with npx (no global install)
+
+```bash
+npx api-to-cli --help
+```
+
+### Option B: Install globally with npm
+
+```bash
+npm install -g api-to-cli
+api-to-cli --help
+```
 
 ## Core Commands
 
+Use either `npx api-to-cli` or `api-to-cli` (if globally installed).
+
 ```bash
 # 1) Validate config only
-node ./bin/api-to-cli.js validate \
+npx api-to-cli validate \
   --config ./examples/trello/api-to-cli.config.js
 
 # 2) Generate only the CLI project
-node ./bin/api-to-cli.js generate \
+npx api-to-cli generate \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-cli
 
 # 3) Generate a full agent bundle (CLI + skill + manifest)
-node ./bin/api-to-cli.js scaffold \
+npx api-to-cli scaffold \
   --config ./examples/trello/api-to-cli.config.js \
   --output ./examples/trello/trelloapi-agent
+```
+
+## Local Development
+
+If you cloned this repo and want to run from source:
+
+```bash
+node ./bin/api-to-cli.js --help
 ```
 
 ## Scaffold Output Layout
