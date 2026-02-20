@@ -16,21 +16,21 @@ program
 program
   .command('get-board')
   .description('Get a board by ID')
-  .option('--boardid <value>', 'Trello board ID')
+  .option('--board-id <value>', 'Trello board ID')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd0.run(options));
 
 program
   .command('list-board-lists')
   .description('List lists on a board')
-  .option('--boardid <value>', 'Trello board ID')
+  .option('--board-id <value>', 'Trello board ID')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd1.run(options));
 
 program
   .command('list-list-cards')
   .description('List cards in a list')
-  .option('--listid <value>', 'Trello list ID')
+  .option('--list-id <value>', 'Trello list ID')
   .option('--pretty', 'Pretty-print JSON')
   .action((options) => cmd2.run(options));
 

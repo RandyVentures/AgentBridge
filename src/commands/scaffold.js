@@ -57,6 +57,9 @@ async function scaffold(flags) {
   }
 
   const { withSkill, withManifest } = resolveArtifactFlags(flags);
+  const cliRelativePath = './cli';
+  const skillRelativePath = './skill/SKILL.md';
+  const manifestRelativePath = './agentbridge.manifest.json';
 
   const configPath = path.resolve(process.cwd(), String(flags.config));
   const outputPath = path.resolve(process.cwd(), String(flags.output));
@@ -72,18 +75,19 @@ async function scaffold(flags) {
 
   let skillPath = null;
   if (withSkill) {
-    const skill = writeSkillPackage(outputPath, config, cliProjectPath);
-    skillPath = skill.skillPath;
+    writeSkillPackage(outputPath, config, cliRelativePath);
+    skillPath = skillRelativePath;
   }
 
   let manifestPath = null;
   if (withManifest) {
-    const manifest = buildManifest(config, cliProjectPath, skillPath);
-    manifestPath = writeManifest(outputPath, manifest);
+    const manifest = buildManifest(config, cliRelativePath, skillPath);
+    writeManifest(outputPath, manifest);
+    manifestPath = manifestRelativePath;
   }
 
   writeScaffoldReadme(outputPath, {
-    cliProjectPath,
+    cliProjectPath: cliRelativePath,
     skillPath,
     manifestPath
   });
@@ -93,7 +97,7 @@ async function scaffold(flags) {
       ok: true,
       command: 'scaffold',
       outputPath,
-      cliProjectPath,
+      cliProjectPath: cliRelativePath,
       skillPath,
       manifestPath,
       generatedCommands: config.commands.map((command) => command.name)

@@ -1,13 +1,13 @@
 {
   "schemaVersion": "1.0",
   "generatedBy": "AgentBridge",
-  "generatedAt": "2026-02-20T00:37:47.863Z",
+  "generatedAt": "2026-02-20T00:42:33.467Z",
   "project": {
     "name": "trelloapi",
     "version": "1.0.0"
   },
   "cli": {
-    "projectPath": "/Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/cli",
+    "projectPath": "./cli",
     "packageName": "trelloapi-cli",
     "binary": "trelloapi",
     "install": [
@@ -63,6 +63,6 @@
     }
   ],
   "agent": {
-    "skillPath": "/Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/skill/SKILL.md"
+    "skillPath": "./skill/SKILL.md"
   }
 }

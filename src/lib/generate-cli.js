@@ -1,16 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const { toKebab } = require('./config-utils');
 
 function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
-}
-
-function toKebab(input) {
-  return String(input)
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 function commandToMethodName(commandName) {

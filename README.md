@@ -59,6 +59,23 @@ node ./bin/api-to-cli.js scaffold \
     SKILL.md
 ```
 
+## Architecture
+
+```mermaid
+flowchart LR
+  C[api-to-cli.config.js] --> V[validate]
+  C --> G[generate]
+  C --> S[scaffold]
+  G --> CLI[Generated CLI Project]
+  S --> CLI2[cli/]
+  S --> SK[skill/SKILL.md]
+  S --> MF[agentbridge.manifest.json]
+  MF --> AG[AI Agent]
+  SK --> AG
+  AG --> RUN[Run generated CLI commands]
+  RUN --> API[Target REST API]
+```
+
 ## How AI Agents Use This
 1. Agent reads `agentbridge.manifest.json` to discover commands, params, auth env vars, and install steps.
 2. Agent reads `skill/SKILL.md` for operating rules and command examples.

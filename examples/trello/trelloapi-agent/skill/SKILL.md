@@ -4,11 +4,11 @@
 Use the generated trelloapi CLI from AgentBridge. Always prefer JSON output for machine parsing.
 
 ## Location
-- CLI project: /Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/cli
+- CLI project: ./cli
 - Binary name: trelloapi
 
 ## Setup
-1. cd /Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/cli
+1. cd ./cli
 2. npm install
 3. npm link
 
@@ -18,14 +18,14 @@ Use the generated trelloapi CLI from AgentBridge. Always prefer JSON output for 
 
 ## Commands
 - get-board: Get a board by ID
-  - --boardid <value> (required)
-  - example: trelloapi get-board --boardid <value>
+  - --board-id <value> (required)
+  - example: trelloapi get-board --board-id <value>
 - list-board-lists: List lists on a board
-  - --boardid <value> (required)
-  - example: trelloapi list-board-lists --boardid <value>
+  - --board-id <value> (required)
+  - example: trelloapi list-board-lists --board-id <value>
 - list-list-cards: List cards in a list
-  - --listid <value> (required)
-  - example: trelloapi list-list-cards --listid <value>
+  - --list-id <value> (required)
+  - example: trelloapi list-list-cards --list-id <value>
 
 ## Rules
 - Do not echo or log auth secrets.
