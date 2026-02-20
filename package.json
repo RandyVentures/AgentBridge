@@ -1,0 +1,16 @@
+{
+  "name": "api-to-cli",
+  "version": "0.1.0",
+  "description": "Generate AI-agent-friendly CLIs from API configs",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "api-to-cli": "./bin/api-to-cli.js"
+  },
+  "scripts": {
+    "validate:trello": "node ./bin/api-to-cli.js validate --config ./examples/trello/api-to-cli.config.js",
+    "generate:trello": "node ./bin/api-to-cli.js generate --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-cli",
+    "scaffold:trello": "node ./bin/api-to-cli.js scaffold --config ./examples/trello/api-to-cli.config.js --output ./examples/trello/trelloapi-agent",
+    "test:smoke": "npm run validate:trello && npm run generate:trello && npm run scaffold:trello"
+  }
+}

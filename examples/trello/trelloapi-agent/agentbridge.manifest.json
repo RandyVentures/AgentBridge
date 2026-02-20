@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "generatedBy": "AgentBridge",
+  "generatedAt": "2026-02-20T00:37:47.863Z",
+  "project": {
+    "name": "trelloapi",
+    "version": "1.0.0"
+  },
+  "cli": {
+    "projectPath": "/Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/cli",
+    "packageName": "trelloapi-cli",
+    "binary": "trelloapi",
+    "install": [
+      "npm install",
+      "npm link"
+    ]
+  },
+  "auth": {
+    "envVars": [
+      "TRELLO_KEY",
+      "TRELLO_TOKEN"
+    ]
+  },
+  "commands": [
+    {
+      "name": "get-board",
+      "description": "Get a board by ID",
+      "method": "GET",
+      "path": "/boards/{boardId}",
+      "params": [
+        {
+          "name": "boardId",
+          "required": true,
+          "description": "Trello board ID"
+        }
+      ]
+    },
+    {
+      "name": "list-board-lists",
+      "description": "List lists on a board",
+      "method": "GET",
+      "path": "/boards/{boardId}/lists",
+      "params": [
+        {
+          "name": "boardId",
+          "required": true,
+          "description": "Trello board ID"
+        }
+      ]
+    },
+    {
+      "name": "list-list-cards",
+      "description": "List cards in a list",
+      "method": "GET",
+      "path": "/lists/{listId}/cards",
+      "params": [
+        {
+          "name": "listId",
+          "required": true,
+          "description": "Trello list ID"
+        }
+      ]
+    }
+  ],
+  "agent": {
+    "skillPath": "/Users/randall/Developer/Src/Repos/api-to-cli/examples/trello/trelloapi-agent/skill/SKILL.md"
+  }
+}
