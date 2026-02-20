@@ -1,6 +1,6 @@
 {
   "name": "api-to-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Generate AI-agent-friendly CLIs, skills, and manifests from API configs",
   "license": "MIT",
   "type": "commonjs",
